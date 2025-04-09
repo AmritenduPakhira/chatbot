@@ -94,12 +94,12 @@ function App() {
             marginBottom: "8px"
           }}>
             {msg.from === 'bot' && (
-              <img src="https://cdn-icons-png.flaticon.com/512/4712/4712107.png"
+              <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png"
                 alt="Bot"
                 style={{ width: 32, height: 32, marginRight: 8 }} />
             )}
             {msg.from === 'user' && (
-              <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png"
+              <img src="https://cdn-icons-png.flaticon.com/512/2202/2202112.png"
                 alt="User"
                 style={{ width: 32, height: 32, marginLeft: 8 }} />
             )}
@@ -118,7 +118,7 @@ function App() {
         {/* Typing animation */}
         {loading && (
           <div style={{ display: "flex", alignItems: "center" }}>
-            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712107.png"
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png"
               alt="Bot"
               style={{ width: 32, height: 32, marginRight: 8 }} />
             <div className="typing-dots">
