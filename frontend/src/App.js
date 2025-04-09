@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { io } from "socket.io-client";
-
-// Socket connection
-const socket = io("http://localhost:5000");
 
 function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
 
+  // Load previous messages
   useEffect(() => {
-    // Fetch previous chat history from DB
     const fetchMessages = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/messages');
-        const data = await response.json();
+        const res = await fetch('http://localhost:5000/api/messages');
+        const data = await res.json();
         setMessages(data);
       } catch (err) {
         console.error('Error fetching messages:', err);
@@ -21,58 +17,49 @@ function App() {
     };
 
     fetchMessages();
-
-    // Listen for bot's reply
-    socket.on('botReply', (data) => {
-      const botMessage = { from: 'bot', text: data.text };
-      setMessages(prev => [...prev, botMessage]);
-
-      // Save bot reply to DB
-      fetch('http://localhost:5000/api/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(botMessage)
-      });
-    });
-
-    // Cleanup
-    return () => {
-      socket.off('botReply');
-    };
   }, []);
 
+  // Send user message
   const sendMessage = async () => {
-    if (input.trim()) {
-      const userMessage = { from: 'user', text: input };
+    if (!input.trim()) return;
 
-      // Show in UI
-      setMessages(prev => [...prev, userMessage]);
+    const userMessage = { from: 'user', text: input };
 
-      // Emit to backend
-      socket.emit('sendMessage', { text: input });
+    // Show user message immediately
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
 
-      // Save to DB
-      await fetch('http://localhost:5000/api/messages', {
+    try {
+      const res = await fetch('http://localhost:5000/api/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(userMessage)
+        body: JSON.stringify({ text: input }) // Only text is sent, bot handles the rest
       });
 
-      setInput('');
+      const data = await res.json();
+
+      // Add bot reply to UI
+      setMessages(prev => [...prev, { from: 'bot', text: data.text }]);
+    } catch (err) {
+      console.error('Error sending message:', err);
     }
   };
 
   return (
     <div style={{ maxWidth: "600px", margin: "50px auto", padding: "20px", border: "1px solid #ccc", borderRadius: "10px" }}>
-      <h2 style={{ textAlign: "center" }}>🤖 Chatbot</h2>
+      <h2 style={{ textAlign: "center" }}>🤖 ChatGPT Bot</h2>
       <div style={{ height: "300px", overflowY: "auto", padding: "10px", background: "#f9f9f9", marginBottom: "10px", borderRadius: "5px" }}>
         {messages.map((msg, i) => (
           <div key={i} style={{ textAlign: msg.from === 'user' ? 'right' : 'left' }}>
-            <p style={{ background: msg.from === 'user' ? "#d1e7dd" : "#e2e3e5", display: "inline-block", padding: "8px 12px", borderRadius: "20px", margin: "5px 0" }}>
+            <p style={{
+              background: msg.from === 'user' ? "#d1e7dd" : "#e2e3e5",
+              display: "inline-block",
+              padding: "8px 12px",
+              borderRadius: "20px",
+              margin: "5px 0"
+            }}>
               <strong>{msg.from}:</strong> {msg.text}
             </p>
           </div>
