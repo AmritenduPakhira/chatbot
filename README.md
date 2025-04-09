@@ -12,7 +12,7 @@ A simple real-time chatbot frontend built with **React**, featuring:
 
 ## 📸 Demo
 
-![Chatbot UI Preview](https://i.imgur.com/YOUR_IMAGE_LINK.png)
+![Chatbot UI Preview](https://drive.google.com/file/d/1D1AUiseIQJXHvuizFnJReeL9YuOipVcO/view?usp=sharing)
 
 ---
 
