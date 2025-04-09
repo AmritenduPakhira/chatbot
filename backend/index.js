@@ -3,6 +3,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
 const Message = require('./models/Message'); 
+const connectDB = require('./db');
 
 const app = express();
 const server = http.createServer(app);
@@ -12,7 +13,13 @@ const io = socketIo(server, {
   }
 });
 
+connectDB();
 app.use(cors());
+app.use(express.json());
+
+app.use('/api/messages', require('./routes/messages'));
+
+const PORT = process.env.PORT || 5000;
 
 io.on('connection', (socket) => {
   console.log("User connected");
